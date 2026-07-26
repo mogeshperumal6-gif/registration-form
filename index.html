@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Registration Form</title>
+
+<!-- Tailwind CSS (loaded from CDN, no build step needed) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Our own custom CSS, written right here in the same file -->
+<style>
+  .submit-btn {
+    background-color: #9ca3af; /* grey when disabled */
+    cursor: not-allowed;
+  }
+
+  .submit-btn.active {
+    background-color: #2563eb; /* blue when enabled */
+    cursor: pointer;
+  }
+
+  .submit-btn.active:hover {
+    background-color: #1d4ed8; /* darker blue on hover */
+  }
+</style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
+
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Registration Form</h2>
+
+    <form id="regForm">
+
+      <!-- Name Field -->
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700 font-medium mb-1">Name</label>
+        <input type="text" id="name" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <p id="nameError" class="text-red-500 text-sm mt-1 hidden">Name cannot be empty</p>
+      </div>
+
+      <!-- Email Field -->
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
+        <input type="text" id="email" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid email address</p>
+      </div>
+
+      <!-- Password Field -->
+      <div class="mb-6">
+        <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+        <input type="password" id="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Password must be at least 6 characters</p>
+      </div>
+
+      <!-- Submit Button (disabled until form is valid) -->
+      <button type="submit" id="submitBtn" disabled class="submit-btn w-full text-white font-semibold py-2 rounded">
+        Submit
+      </button>
+
+      <p id="successMsg" class="text-green-600 text-center mt-4 hidden">Registration successful!</p>
+
+    </form>
+  </div>
+
+  <!-- Our own JavaScript, written right here in the same file -->
+  <script>
+    // Get all the input fields
+    var nameInput = document.getElementById("name");
+    var emailInput = document.getElementById("email");
+    var passwordInput = document.getElementById("password");
+
+    // Get all the error messages
+    var nameError = document.getElementById("nameError");
+    var emailError = document.getElementById("emailError");
+    var passwordError = document.getElementById("passwordError");
+
+    // Get the submit button and the form
+    var submitBtn = document.getElementById("submitBtn");
+    var regForm = document.getElementById("regForm");
+    var successMsg = document.getElementById("successMsg");
+
+    // These will keep track of whether each field is valid or not
+    var isNameValid = false;
+    var isEmailValid = false;
+    var isPasswordValid = false;
+
+    // Function to check the Name field
+    function checkName() {
+      if (nameInput.value.trim() === "") {
+        nameError.classList.remove("hidden"); // show error
+        isNameValid = false;
+      } else {
+        nameError.classList.add("hidden"); // hide error
+        isNameValid = true;
+      }
+      checkFormValid();
+    }
+
+    // Function to check the Email field
+    function checkEmail() {
+      // simple pattern to check for something like text@text.text
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailPattern.test(emailInput.value.trim())) {
+        emailError.classList.add("hidden");
+        isEmailValid = true;
+      } else {
+        emailError.classList.remove("hidden");
+        isEmailValid = false;
+      }
+      checkFormValid();
+    }
+
+    // Function to check the Password field
+    function checkPassword() {
+      if (passwordInput.value.length < 6) {
+        passwordError.classList.remove("hidden");
+        isPasswordValid = false;
+      } else {
+        passwordError.classList.add("hidden");
+        isPasswordValid = true;
+      }
+      checkFormValid();
+    }
+
+    // Function to enable/disable the submit button
+    function checkFormValid() {
+      if (isNameValid && isEmailValid && isPasswordValid) {
+        submitBtn.disabled = false;
+        submitBtn.classList.add("active"); // turns blue
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.remove("active"); // stays grey
+      }
+    }
+
+    // Run validation in real-time as the user types
+    nameInput.addEventListener("input", checkName);
+    emailInput.addEventListener("input", checkEmail);
+    passwordInput.addEventListener("input", checkPassword);
+
+    // When the form is submitted
+    regForm.addEventListener("submit", function (event) {
+      event.preventDefault(); // stop the page from refreshing
+
+      // just to be safe, check everything again before showing success
+      checkName();
+      checkEmail();
+      checkPassword();
+
+      if (isNameValid && isEmailValid && isPasswordValid) {
+        successMsg.classList.remove("hidden");
+      }
+    });
+  </script>
+
+</body>
+</html>
